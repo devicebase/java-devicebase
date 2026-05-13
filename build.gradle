@@ -1,0 +1,120 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+    id 'checkstyle'
+}
+
+group = 'com.devicebase'
+version = '2026.5.13'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    // JSON serialization
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
+
+    // HTTP client (Java 11+ built-in)
+    // WebSocket (Java 11+ built-in)
+
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
+    testCompileOnly 'org.apiguardian:apiguardian-api:1.1.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+    }
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.author = true
+    options.version = true
+    options.links = ['https://docs.oracle.com/en/java/javase/11/docs/api/']
+}
+
+checkstyle {
+    configFile = file('config/checkstyle/checkstyle.xml')
+    toolVersion = '10.17.0'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = 'devicebase-sdk'
+
+            pom {
+                name = 'DeviceBase Java SDK'
+                description = 'Java SDK for DeviceBase device automation platform'
+                url = 'https://github.com/uusense/java-devicebase'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                        distribution = 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'uusense'
+                        name = 'Richie'
+                        email = 'richie@devicebase.cn'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git@github.com:uusense/java-devicebase.git'
+                    developerConnection = 'scm:git@github.com:uusense/java-devicebase.git'
+                    url = 'https://github.com/uusense/java-devicebase'
+                }
+
+                issueManagement {
+                    system = 'GitHub Issues'
+                    url = 'https://github.com/uusense/java-devicebase/issues'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'SonatypeOSSPages'
+            url = version.endsWith('SNAPSHOT')
+                ? 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+                : 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username = System.getenv('SONATYPE_USERNAME') ?: ''
+                password = System.getenv('SONATYPE_PASSWORD') ?: ''
+            }
+        }
+    }
+}
+
+signing {
+    useInMemoryPgpKeys(
+        System.getenv('SIGNING_KEY_ID'),
+        System.getenv('SIGNING_KEY'),
+        System.getenv('SIGNING_PASSWORD')
+    )
+    sign publishing.publications.mavenJava
+}
