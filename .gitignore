@@ -52,6 +52,9 @@ buildNumber.properties
 *.checkstyle
 config/checkstyle/cache/*
 
+## Publish credentials
+#.publish-env
+#
 # Misc
 *.swp
 *.swo

@@ -26,27 +26,23 @@ DeviceBase is a cloud platform for remote Android device control and automation.
 
 ```xml
 <dependency>
-    <groupId>com.devicebase</groupId>
+    <groupId>cn.devicebase</groupId>
     <artifactId>devicebase-sdk</artifactId>
-    <version>2026.5.13</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'com.devicebase:devicebase-sdk:2026.5.13'
+implementation 'cn.devicebase:devicebase-sdk:0.1.0'
 ```
-
-### Manual Installation
-
-Download the JAR from the releases page and add it to your project's classpath.
 
 ## Quick Start
 
 ```java
-import com.devicebase.DeviceBaseClient;
-import com.devicebase.model.DeviceInfo;
+import cn.devicebase.client.DeviceBaseClient;
+import cn.devicebase.model.DeviceInfo;
 
 public class Example {
     public static void main(String[] args) {
@@ -60,10 +56,10 @@ public class Example {
             System.out.println("Device: " + info.getSerial());
 
             // Control the device
-            client.tap(100, 200);           // Tap at coordinates
-            client.swipe(100, 500, 100, 100);  // Swipe up
-            client.launchApp("com.example.app"); // Launch an app
-            client.inputText("Hello World");    // Input text
+            client.tap(100, 200);                    // Tap at coordinates
+            client.swipe(100, 500, 100, 100);      // Swipe up
+            client.launchApp("com.example.app");        // Launch an app
+            client.inputText("Hello World");           // Input text
 
             // Get screenshot
             byte[] screenshot = client.getScreenshot();
@@ -122,23 +118,23 @@ client.dumpHierarchy();              // Get UI hierarchy
 
 // Screenshots
 client.getScreenshot();              // Get screenshot as JPEG bytes
-client.downloadScreenshot();        // Download screenshot
+client.downloadScreenshot();         // Download screenshot
 ```
 
 ### Platform API
 
 ```java
 // Device management
-client.listDevices();                        // List all devices
+client.listDevices();                         // List all devices
 client.listDevices(keyword, type, state, page, pageSize); // Filtered list
-client.getDevice(deviceId);                 // Get device by ID
-client.getDeviceStats(includeShared);       // Get device statistics
+client.getDevice(deviceId);                  // Get device by ID
+client.getDeviceStats(includeShared);        // Get device statistics
 
 // Session management
-client.startDeviceUsage(deviceId);          // Start using a device
-client.sendHeartbeat(sessionId);             // Send heartbeat
-client.stopDeviceUsage(sessionId);           // Stop using a device
-client.getActiveSession();                  // Get active session
+client.startDeviceUsage(deviceId);           // Start using a device
+client.sendHeartbeat(sessionId);              // Send heartbeat
+client.stopDeviceUsage(sessionId);            // Stop using a device
+client.getActiveSession();                   // Get active session
 ```
 
 ### WebSocket Clients
@@ -163,7 +159,7 @@ try (MinitouchClient minitouch = new MinitouchClient(baseUrl, serial, apiKey)) {
 The SDK provides specific exception types for different error scenarios:
 
 ```java
-import com.devicebase.exception.*;
+import cn.devicebase.exception.*;
 
 try {
     DeviceBaseClient client = new DeviceBaseClient(apiKey, serial);
@@ -187,28 +183,6 @@ try {
 
 # Run tests
 ./gradlew test
-
-# Create JAR
-./gradlew jar
-
-# Publish to local Maven repository
-./gradlew publishToMavenLocal
-```
-
-## Publishing to Maven Central
-
-The SDK is configured for publishing to Maven Central via Sonatype. Set the following environment variables:
-
-- `SONATYPE_USERNAME` - Sonatype OSSRH username
-- `SONATYPE_PASSWORD` - Sonatype OSSRH password
-- `SIGNING_KEY_ID` - GPG key ID
-- `SIGNING_KEY` - GPG private key (armored)
-- `SIGNING_PASSWORD` - GPG key password
-
-Then run:
-
-```bash
-./gradlew publish
 ```
 
 ## License
@@ -218,6 +192,5 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## Links
 
 - [DeviceBase Website](https://devicebase.cn)
-- [GitHub Repository](https://github.com/uusense/java-devicebase)
-- [Python SDK](https://github.com/uusense/python-devicebase)
-- [Issue Tracker](https://github.com/uusense/java-devicebase/issues)
+- [GitHub Repository](https://github.com/devicebase/java-devicebase)
+- [Issue Tracker](https://github.com/devicebase/java-devicebase/issues)
