@@ -16,7 +16,7 @@ class DeviceInfoTest {
         Map<String, Object> data = Map.of("status", "online", "model", "TestDevice");
         DeviceInfo info = new DeviceInfo("serial123", data);
 
-        assertEquals("serial123", info.getSerial());
+        assertEquals("serial123", info.getSerialno());
         assertEquals("online", info.get("status"));
         assertEquals("TestDevice", info.get("model"));
     }
@@ -50,7 +50,7 @@ class DeviceInfoTest {
         Map<String, Object> data = Map.of("name", "Device1");
         DeviceInfo info = DeviceInfo.fromMap("serial123", data);
 
-        assertEquals("serial123", info.getSerial());
+        assertEquals("serial123", info.getSerialno());
         assertEquals("Device1", info.get("name"));
     }
 

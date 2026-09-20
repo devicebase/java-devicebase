@@ -40,7 +40,7 @@ import java.util.Properties;
  * <pre>{@code
  * import cn.devicebase.DeviceBaseClient;
  *
- * DeviceBaseClient client = new DeviceBaseClient("your-api-key", "device-serial-number");
+ * DeviceBaseClient client = new DeviceBaseClient("your-api-key", "your-serialno");
  *
  * // Get device info
  * DeviceInfo info = client.getDeviceInfo();
@@ -67,7 +67,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
     /** Environment variable name for base URL. */
     public static final String ENV_BASE_URL = "DEVICEBASE_BASE_URL";
 
-    private final String serial;
+    private final String serialno;
     private final String baseUrl;
     private final String apiKey;
     private final Duration timeout;
@@ -80,37 +80,37 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * if the provided apiKey is null or empty.</p>
      *
      * @param apiKey the JWT API key for authentication (or null to read from env)
-     * @param serial the device unique identifier
+     * @param serialno the device unique identifier
      * @throws AuthenticationException if no API key is provided
      */
-    public DeviceBaseClient(String apiKey, String serial) {
-        this(apiKey, serial, DEFAULT_BASE_URL, Duration.ofSeconds(30));
+    public DeviceBaseClient(String apiKey, String serialno) {
+        this(apiKey, serialno, DEFAULT_BASE_URL, Duration.ofSeconds(30));
     }
 
     /**
      * Creates a new DeviceBaseClient with explicit base URL.
      *
      * @param apiKey the JWT API key for authentication
-     * @param serial the device unique identifier
+     * @param serialno the device unique identifier
      * @param baseUrl the base URL of the DeviceBase API
      * @throws AuthenticationException if no API key is provided
      */
-    public DeviceBaseClient(String apiKey, String serial, String baseUrl) {
-        this(apiKey, serial, baseUrl, Duration.ofSeconds(30));
+    public DeviceBaseClient(String apiKey, String serialno, String baseUrl) {
+        this(apiKey, serialno, baseUrl, Duration.ofSeconds(30));
     }
 
     /**
      * Creates a new DeviceBaseClient with custom timeout.
      *
      * @param apiKey the JWT API key for authentication
-     * @param serial the device unique identifier
+     * @param serialno the device unique identifier
      * @param baseUrl the base URL of the DeviceBase API
      * @param timeout the request timeout
      * @throws AuthenticationException if no API key is provided
      */
-    public DeviceBaseClient(String apiKey, String serial, String baseUrl, Duration timeout) {
+    public DeviceBaseClient(String apiKey, String serialno, String baseUrl, Duration timeout) {
         this.apiKey = resolveApiKey(apiKey);
-        this.serial = Objects.requireNonNull(serial, "Serial is required");
+        this.serialno = Objects.requireNonNull(serialno, "Serial is required");
         String envBaseUrl = System.getenv(ENV_BASE_URL);
         this.baseUrl = baseUrl != null ? baseUrl : (envBaseUrl != null ? envBaseUrl : DEFAULT_BASE_URL);
         this.timeout = timeout;
@@ -126,7 +126,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      */
     public DeviceBaseClient(String apiKey, DeviceResponse deviceResponse) {
         this.apiKey = resolveApiKey(apiKey);
-        this.serial = deviceResponse.getSerial();
+        this.serialno = deviceResponse.getSerialno();
         this.baseUrl = deviceResponse.getServerUrl() != null
                 ? deviceResponse.getServerUrl()
                 : DEFAULT_BASE_URL;
@@ -149,12 +149,23 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
     }
 
     /**
-     * Returns the device serial.
+     * Returns the device serialno.
      *
      * @return the device unique identifier
      */
+    public String getSerialno() {
+        return serialno;
+    }
+
+    /**
+     * Returns the device serialno.
+     *
+     * @return the device unique identifier
+     * @deprecated use {@link #getSerialno()}. Removed in the next major release.
+     */
+    @Deprecated
     public String getSerial() {
-        return serial;
+        return serialno;
     }
 
     /**
@@ -183,7 +194,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the device is not found or not connected
      */
     public DeviceInfo getDeviceInfo() throws DeviceBaseException {
-        return httpClient.getDeviceInfo(serial);
+        return httpClient.getDeviceInfo(serialno);
     }
 
     // ========== Touch Operations ==========
@@ -197,7 +208,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult tap(int x, int y) throws DeviceBaseException {
-        return httpClient.tap(serial, x, y);
+        return httpClient.tap(serialno, x, y);
     }
 
     /**
@@ -208,7 +219,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult tap(Point point) throws DeviceBaseException {
-        return httpClient.tap(serial, point);
+        return httpClient.tap(serialno, point);
     }
 
     /**
@@ -220,7 +231,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult doubleTap(int x, int y) throws DeviceBaseException {
-        return httpClient.doubleTap(serial, x, y);
+        return httpClient.doubleTap(serialno, x, y);
     }
 
     /**
@@ -231,7 +242,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult doubleTap(Point point) throws DeviceBaseException {
-        return httpClient.doubleTap(serial, point);
+        return httpClient.doubleTap(serialno, point);
     }
 
     /**
@@ -243,7 +254,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult longPress(int x, int y) throws DeviceBaseException {
-        return httpClient.longPress(serial, x, y);
+        return httpClient.longPress(serialno, x, y);
     }
 
     /**
@@ -254,7 +265,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult longPress(Point point) throws DeviceBaseException {
-        return httpClient.longPress(serial, point);
+        return httpClient.longPress(serialno, point);
     }
 
     /**
@@ -268,7 +279,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult swipe(int x1, int y1, int x2, int y2) throws DeviceBaseException {
-        return httpClient.swipe(serial, x1, y1, x2, y2);
+        return httpClient.swipe(serialno, x1, y1, x2, y2);
     }
 
     /**
@@ -279,7 +290,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult swipe(Bounds bounds) throws DeviceBaseException {
-        return httpClient.swipe(serial, bounds);
+        return httpClient.swipe(serialno, bounds);
     }
 
     // ========== Navigation ==========
@@ -291,7 +302,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult back() throws DeviceBaseException {
-        return httpClient.back(serial);
+        return httpClient.back(serialno);
     }
 
     /**
@@ -301,7 +312,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult home() throws DeviceBaseException {
-        return httpClient.home(serial);
+        return httpClient.home(serialno);
     }
 
     // ========== App Operations ==========
@@ -314,7 +325,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult launchApp(String appName) throws DeviceBaseException {
-        return httpClient.launchApp(serial, appName);
+        return httpClient.launchApp(serialno, appName);
     }
 
     /**
@@ -325,7 +336,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult stopApp(String appName) throws DeviceBaseException {
-        return httpClient.stopApp(serial, appName);
+        return httpClient.stopApp(serialno, appName);
     }
 
     /**
@@ -335,7 +346,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult stopCurrentApp() throws DeviceBaseException {
-        return httpClient.stopCurrentApp(serial);
+        return httpClient.stopCurrentApp(serialno);
     }
 
     /**
@@ -349,7 +360,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult bash(String command) throws DeviceBaseException {
-        return httpClient.bash(serial, command);
+        return httpClient.bash(serialno, command);
     }
 
     /**
@@ -360,7 +371,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult installApp(String appPath) throws DeviceBaseException {
-        return httpClient.installApp(serial, appPath);
+        return httpClient.installApp(serialno, appPath);
     }
 
     /**
@@ -371,7 +382,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult installStatus(String installId) throws DeviceBaseException {
-        return httpClient.installStatus(serial, installId);
+        return httpClient.installStatus(serialno, installId);
     }
 
     /**
@@ -381,7 +392,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public AppInfo getCurrentApp() throws DeviceBaseException {
-        return httpClient.getCurrentApp(serial);
+        return httpClient.getCurrentApp(serialno);
     }
 
     // ========== Text Input ==========
@@ -394,7 +405,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult inputText(String text) throws DeviceBaseException {
-        return httpClient.inputText(serial, text);
+        return httpClient.inputText(serialno, text);
     }
 
     /**
@@ -404,7 +415,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public OperationResult clearText() throws DeviceBaseException {
-        return httpClient.clearText(serial);
+        return httpClient.clearText(serialno);
     }
 
     // ========== UI Hierarchy ==========
@@ -416,7 +427,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public HierarchyInfo dumpHierarchy() throws DeviceBaseException {
-        return httpClient.dumpHierarchy(serial);
+        return httpClient.dumpHierarchy(serialno);
     }
 
     // ========== Screenshots ==========
@@ -428,7 +439,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the device is not found
      */
     public byte[] getScreenshot() throws DeviceBaseException {
-        return httpClient.getScreenshot(serial);
+        return httpClient.getScreenshot(serialno);
     }
 
     /**
@@ -438,7 +449,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * @throws DeviceBaseException if the request fails
      */
     public byte[] downloadScreenshot() throws DeviceBaseException {
-        return httpClient.downloadScreenshot(serial);
+        return httpClient.downloadScreenshot(serialno);
     }
 
     // ========== Platform API ==========
@@ -487,7 +498,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * Returns the browser platform API for this client's connection.
      *
      * <p>Browser methods take the browser device's serialno per call, so they are
-     * not bound to {@link #getSerial()}.</p>
+     * not bound to {@link #getSerialno()}.</p>
      *
      * @return the browser API
      */
@@ -499,7 +510,7 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      * Returns the computer platform API for this client's connection.
      *
      * <p>Computer methods take the computer device's serialno per call, so they
-     * are not bound to {@link #getSerial()}.</p>
+     * are not bound to {@link #getSerialno()}.</p>
      *
      * @return the computer API
      */

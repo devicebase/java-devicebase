@@ -33,7 +33,7 @@ import cn.devicebase.websocket.MinitouchClient;
  * public class Example {
  *     public static void main(String[] args) {
  *         try (DeviceBaseClient client = new DeviceBaseClient(
- *                 "your-api-key", "device-serial-number")) {
+ *                 "your-api-key", "your-serialno")) {
  *
  *             // Get device info
  *             DeviceInfo info = client.getDeviceInfo();
@@ -64,24 +64,24 @@ public final class DeviceBase {
      * <p>API key is read from the DEVICEBASE_API_KEY environment variable.</p>
      *
      * @param apiKey the JWT API key for authentication
-     * @param serial the device unique identifier
+     * @param serialno the device unique identifier
      * @return a new DeviceBaseClient instance
      * @throws AuthenticationException if no API key is provided
      */
-    public static DeviceBaseClient createClient(String apiKey, String serial) {
-        return new DeviceBaseClient(apiKey, serial);
+    public static DeviceBaseClient createClient(String apiKey, String serialno) {
+        return new DeviceBaseClient(apiKey, serialno);
     }
 
     /**
      * Creates a new DeviceBaseClient with explicit base URL.
      *
      * @param apiKey the JWT API key for authentication
-     * @param serial the device unique identifier
+     * @param serialno the device unique identifier
      * @param baseUrl the base URL of the DeviceBase API
      * @return a new DeviceBaseClient instance
      * @throws AuthenticationException if no API key is provided
      */
-    public static DeviceBaseClient createClient(String apiKey, String serial, String baseUrl) {
-        return new DeviceBaseClient(apiKey, serial, baseUrl);
+    public static DeviceBaseClient createClient(String apiKey, String serialno, String baseUrl) {
+        return new DeviceBaseClient(apiKey, serialno, baseUrl);
     }
 }

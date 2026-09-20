@@ -26,7 +26,7 @@ public class DeviceBaseExample {
 
     // Configuration
     private static final String API_KEY = System.getenv("DEVICEBASE_API_KEY");
-    private static final String DEVICE_SERIAL = "your-device-serial-number";
+    private static final String DEVICE_SERIALNO = "your-device-serial-number";
 
     public static void main(String[] args) {
         if (API_KEY == null || API_KEY.isEmpty()) {
@@ -39,7 +39,7 @@ public class DeviceBaseExample {
         System.out.println("============================");
 
         // Use try-with-resources to ensure proper cleanup
-        try (DeviceBaseClient client = new DeviceBaseClient(API_KEY, DEVICE_SERIAL)) {
+        try (DeviceBaseClient client = new DeviceBaseClient(API_KEY, DEVICE_SERIALNO)) {
             // Example: Get device information
             exampleGetDeviceInfo(client);
 
@@ -77,7 +77,7 @@ public class DeviceBaseExample {
         System.out.println("\n--- Get Device Info ---");
 
         DeviceInfo info = client.getDeviceInfo();
-        System.out.println("Device Serial: " + info.getSerial());
+        System.out.println("Device Serial: " + info.getSerialno());
         System.out.println("Device Data: " + info.getData());
     }
 
@@ -186,7 +186,7 @@ public class DeviceBaseExample {
      * Demonstrates driving a registered browser device over CDP.
      *
      * <p>Browser methods take the browser device's serialno, which is different
-     * from the mobile serial the client was constructed with.</p>
+     * from the mobile serialno the client was constructed with.</p>
      */
     private static void exampleBrowser(DeviceBaseClient client) throws Exception {
         System.out.println("\n--- Browser ---");

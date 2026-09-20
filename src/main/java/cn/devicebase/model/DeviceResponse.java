@@ -28,6 +28,7 @@ public final class DeviceResponse {
     @JsonProperty("id")
     private final int id;
 
+    /** The platform key. See the creator for the legacy {@code serial} fallback. */
     @JsonProperty("serialno")
     private final String serialno;
 
@@ -76,10 +77,18 @@ public final class DeviceResponse {
     @JsonProperty("updated_at")
     private final Instant updatedAt;
 
+    /**
+     * Builds a row. {@code legacySerial} carries the older Python service's
+     * spelling of the identifier column; prefer {@code serialno} when both are
+     * present. It is a separate creator parameter rather than a
+     * {@code @JsonAlias} because an alias makes the outcome depend on which key
+     * appears last in the JSON.
+     */
     @JsonCreator
     public DeviceResponse(
             @JsonProperty("id") int id,
             @JsonProperty("serialno") String serialno,
+            @JsonProperty("serial") String legacySerial,
             @JsonProperty("device_sn") String deviceSn,
             @JsonProperty("state") String state,
             @JsonProperty("name") String name,
@@ -96,7 +105,8 @@ public final class DeviceResponse {
             @JsonProperty("network") String network,
             @JsonProperty("updated_at") Instant updatedAt) {
         this.id = id;
-        this.serialno = serialno;
+        // The platform key wins when both are sent.
+        this.serialno = serialno != null ? serialno : legacySerial;
         this.deviceSn = deviceSn;
         this.state = state;
         this.name = name;
@@ -133,7 +143,7 @@ public final class DeviceResponse {
     }
 
     /**
-     * Returns the physical device serial (a UUID).
+     * Returns the physical device serialno (a UUID).
      *
      * @return the device_sn UUID
      */

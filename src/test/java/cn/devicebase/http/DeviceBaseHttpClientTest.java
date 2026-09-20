@@ -247,6 +247,38 @@ class DeviceBaseHttpClientTest {
         }
     }
 
+    /**
+     * The older Python service names the identifier column {@code serial}. The
+     * {@code @JsonAlias} on the creator parameter is what makes the field
+     * populate; without it the list-driven lookups silently see null.
+     */
+    @Test
+    void decodesTheLegacySerialKeyInTheDeviceList() throws Exception {
+        try (RecordingServer server = new RecordingServer()) {
+            server.respondWith(200,
+                    "{\"code\":200,\"message\":\"success\",\"data\":["
+                    + "{\"id\":1,\"serial\":\"LEGACY-001\",\"state\":\"free\"}]}");
+
+            List<DeviceResponse> devices = clientFor(server).listDevices();
+
+            assertEquals(1, devices.size());
+            assertEquals("LEGACY-001", devices.get(0).getSerialno());
+        }
+    }
+
+    @Test
+    void prefersSerialnoWhenBothKeysArePresent() throws Exception {
+        try (RecordingServer server = new RecordingServer()) {
+            server.respondWith(200,
+                    "{\"code\":200,\"message\":\"success\",\"data\":["
+                    + "{\"id\":1,\"serialno\":\"db-primary\",\"serial\":\"legacy-other\"}]}");
+
+            List<DeviceResponse> devices = clientFor(server).listDevices();
+
+            assertEquals("db-primary", devices.get(0).getSerialno());
+        }
+    }
+
     @Test
     void listDevicesSendsItsFilters() throws Exception {
         try (RecordingServer server = new RecordingServer()) {

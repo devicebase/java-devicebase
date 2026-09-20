@@ -432,163 +432,163 @@ public class DeviceBaseHttpClient implements AutoCloseable {
     /**
      * Gets detailed information about a device.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return DeviceInfo containing device status and connection state
      * @throws DeviceNotFoundException if the device is not found
-     * @throws ValidationException if the serial is invalid
+     * @throws ValidationException if the serialno is invalid
      */
-    public DeviceInfo getDeviceInfo(String serial) throws DeviceBaseException {
-        JsonNode response = request("POST", mobilePath(serial, "deviceinfo"), null, null);
-        return DeviceInfo.fromMap(serial, toMap(response));
+    public DeviceInfo getDeviceInfo(String serialno) throws DeviceBaseException {
+        JsonNode response = request("POST", mobilePath(serialno, "deviceinfo"), null, null);
+        return DeviceInfo.fromMap(serialno, toMap(response));
     }
 
     /**
      * Performs a single tap at the specified coordinates.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param x horizontal coordinate
      * @param y vertical coordinate
      * @return OperationResult indicating success or failure
      */
-    public OperationResult tap(String serial, int x, int y) throws DeviceBaseException {
-        return tap(serial, new Point(x, y));
+    public OperationResult tap(String serialno, int x, int y) throws DeviceBaseException {
+        return tap(serialno, new Point(x, y));
     }
 
     /**
      * Performs a single tap at the specified point.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param point the coordinates where the tap should occur
      * @return OperationResult indicating success or failure
      */
-    public OperationResult tap(String serial, Point point) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "tap"), point.toMap(), null));
+    public OperationResult tap(String serialno, Point point) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "tap"), point.toMap(), null));
     }
 
     /**
      * Performs a double tap at the specified coordinates.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param x horizontal coordinate
      * @param y vertical coordinate
      * @return OperationResult indicating success or failure
      */
-    public OperationResult doubleTap(String serial, int x, int y) throws DeviceBaseException {
-        return doubleTap(serial, new Point(x, y));
+    public OperationResult doubleTap(String serialno, int x, int y) throws DeviceBaseException {
+        return doubleTap(serialno, new Point(x, y));
     }
 
     /**
      * Performs a double tap at the specified point.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param point the coordinates where the double tap should occur
      * @return OperationResult indicating success or failure
      */
-    public OperationResult doubleTap(String serial, Point point) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "double_tap"), point.toMap(), null));
+    public OperationResult doubleTap(String serialno, Point point) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "double_tap"), point.toMap(), null));
     }
 
     /**
      * Performs a long press at the specified coordinates.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param x horizontal coordinate
      * @param y vertical coordinate
      * @return OperationResult indicating success or failure
      */
-    public OperationResult longPress(String serial, int x, int y) throws DeviceBaseException {
-        return longPress(serial, new Point(x, y));
+    public OperationResult longPress(String serialno, int x, int y) throws DeviceBaseException {
+        return longPress(serialno, new Point(x, y));
     }
 
     /**
      * Performs a long press at the specified point.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param point the coordinates where the long press should occur
      * @return OperationResult indicating success or failure
      */
-    public OperationResult longPress(String serial, Point point) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "long_press"), point.toMap(), null));
+    public OperationResult longPress(String serialno, Point point) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "long_press"), point.toMap(), null));
     }
 
     /**
      * Performs a swipe gesture from start to end coordinates.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param x1 starting X coordinate
      * @param y1 starting Y coordinate
      * @param x2 ending X coordinate
      * @param y2 ending Y coordinate
      * @return OperationResult indicating success or failure
      */
-    public OperationResult swipe(String serial, int x1, int y1, int x2, int y2)
+    public OperationResult swipe(String serialno, int x1, int y1, int x2, int y2)
             throws DeviceBaseException {
-        return swipe(serial, new Bounds(x1, y1, x2, y2));
+        return swipe(serialno, new Bounds(x1, y1, x2, y2));
     }
 
     /**
      * Performs a swipe gesture from start to end coordinates.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param bounds the start and end coordinates
      * @return OperationResult indicating success or failure
      */
-    public OperationResult swipe(String serial, Bounds bounds) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "swipe"), bounds.toMap(), null));
+    public OperationResult swipe(String serialno, Bounds bounds) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "swipe"), bounds.toMap(), null));
     }
 
     /**
      * Simulates the device back button press.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return OperationResult indicating success or failure
      */
-    public OperationResult back(String serial) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "back"), null, null));
+    public OperationResult back(String serialno) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "back"), null, null));
     }
 
     /**
      * Simulates the device home button press.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return OperationResult indicating success or failure
      */
-    public OperationResult home(String serial) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "home"), null, null));
+    public OperationResult home(String serialno) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "home"), null, null));
     }
 
     /**
      * Launches an application on the device.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param appName the package name or identifier of the app to launch
      * @return OperationResult indicating success or failure
      */
-    public OperationResult launchApp(String serial, String appName) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "launch_app"),
+    public OperationResult launchApp(String serialno, String appName) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "launch_app"),
                 new LaunchAppRequest(appName).toMap(), null));
     }
 
     /**
      * Stops an application on the device.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param appName the package name or identifier of the app to stop
      * @return OperationResult indicating success or failure
      */
-    public OperationResult stopApp(String serial, String appName) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "stop_app"),
+    public OperationResult stopApp(String serialno, String appName) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "stop_app"),
                 new LaunchAppRequest(appName).toMap(), null));
     }
 
     /**
      * Stops the app currently in the foreground.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return OperationResult indicating success or failure
      */
-    public OperationResult stopCurrentApp(String serial) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "stop_current_app"), null, null));
+    public OperationResult stopCurrentApp(String serialno) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "stop_current_app"), null, null));
     }
 
     /**
@@ -597,56 +597,56 @@ public class DeviceBaseHttpClient implements AutoCloseable {
      * <p>The command's own exit status comes back in the payload as
      * {@code data.exitCode} — a non-zero value is not an API error.</p>
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param command the shell command
      * @return OperationResult whose data carries exitCode/stdout/stderr
      */
-    public OperationResult bash(String serial, String command) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "bash"),
+    public OperationResult bash(String serialno, String command) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "bash"),
                 orderedBody("command", command), null));
     }
 
     /**
      * Inputs text into the currently focused field.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param text the text to input
      * @return OperationResult indicating success or failure
      */
-    public OperationResult inputText(String serial, String text) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "input"),
+    public OperationResult inputText(String serialno, String text) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "input"),
                 new InputTextRequest(text).toMap(), null));
     }
 
     /**
      * Clears text in the currently focused field.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return OperationResult indicating success or failure
      */
-    public OperationResult clearText(String serial) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "clear_text"), null, null));
+    public OperationResult clearText(String serialno) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "clear_text"), null, null));
     }
 
     /**
      * Gets information about the currently running foreground app.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return AppInfo containing the current app name and details
      */
-    public AppInfo getCurrentApp(String serial) throws DeviceBaseException {
-        return AppInfo.fromMap(toMap(request("POST", mobilePath(serial, "current_app"), null, null)));
+    public AppInfo getCurrentApp(String serialno) throws DeviceBaseException {
+        return AppInfo.fromMap(toMap(request("POST", mobilePath(serialno, "current_app"), null, null)));
     }
 
     /**
      * Gets the current UI hierarchy structure.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return HierarchyInfo containing the UI element tree
      */
-    public HierarchyInfo dumpHierarchy(String serial) throws DeviceBaseException {
+    public HierarchyInfo dumpHierarchy(String serialno) throws DeviceBaseException {
         return HierarchyInfo.fromMap(
-                toMap(request("POST", mobilePath(serial, "dump_hierarchy"), null, null)));
+                toMap(request("POST", mobilePath(serialno, "dump_hierarchy"), null, null)));
     }
 
     /**
@@ -656,25 +656,25 @@ public class DeviceBaseHttpClient implements AutoCloseable {
      * locally. The call returns an install id for a background task, polled
      * with {@link #installStatus}.</p>
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param appPath the package path on the agent host
      * @return OperationResult whose data carries the install id
      */
-    public OperationResult installApp(String serial, String appPath) throws DeviceBaseException {
-        return operation(request("POST", mobilePath(serial, "install_app"),
+    public OperationResult installApp(String serialno, String appPath) throws DeviceBaseException {
+        return operation(request("POST", mobilePath(serialno, "install_app"),
                 orderedBody("app_path", appPath), null));
     }
 
     /**
      * Queries a background install task.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @param installId the install id returned by {@link #installApp}
      * @return OperationResult describing the install
      */
-    public OperationResult installStatus(String serial, String installId)
+    public OperationResult installStatus(String serialno, String installId)
             throws DeviceBaseException {
-        String path = mobilePath(serial, "install_status")
+        String path = mobilePath(serialno, "install_status")
                 + buildQuery(orderedBody("install_id", installId));
         return operation(request("GET", path, null, null));
     }
@@ -687,25 +687,25 @@ public class DeviceBaseHttpClient implements AutoCloseable {
      * server dispatches {@code /v1/screen/{serialno}} by device type, so browser
      * and computer serials are valid too.</p>
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return raw image bytes
      * @throws DeviceNotFoundException if the device is not found
      */
-    public byte[] getScreenshot(String serial) throws DeviceBaseException {
-        return requestBytes("POST", mobilePath(serial, "screen"), null);
+    public byte[] getScreenshot(String serialno) throws DeviceBaseException {
+        return requestBytes("POST", mobilePath(serialno, "screen"), null);
     }
 
     /**
      * Gets a screenshot using POST.
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return raw image bytes
      * @deprecated {@link #getScreenshot} now posts to the same route; this is a
      *     duplicate kept for source compatibility.
      */
     @Deprecated
-    public byte[] getScreenshotPost(String serial) throws DeviceBaseException {
-        return getScreenshot(serial);
+    public byte[] getScreenshotPost(String serialno) throws DeviceBaseException {
+        return getScreenshot(serialno);
     }
 
     /**
@@ -715,11 +715,11 @@ public class DeviceBaseHttpClient implements AutoCloseable {
      * hits {@code GET /v1/screenshot/{serialno}} rather than the cross-family
      * {@code /v1/screen} route.</p>
      *
-     * @param serial the device serialno
+     * @param serialno the device serialno
      * @return raw image bytes
      */
-    public byte[] downloadScreenshot(String serial) throws DeviceBaseException {
-        return requestBytes("GET", "/v1/screenshot/" + encode(serial), null);
+    public byte[] downloadScreenshot(String serialno) throws DeviceBaseException {
+        return requestBytes("GET", "/v1/screenshot/" + encode(serialno), null);
     }
 
     // ========== Devices ==========

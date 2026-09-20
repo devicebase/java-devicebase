@@ -20,27 +20,38 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class DeviceInfo {
 
-    private final String serial;
+    private final String serialno;
     private final Map<String, Object> data;
 
     /**
      * Creates a new DeviceInfo.
      *
-     * @param serial the device unique identifier
+     * @param serialno the device unique identifier
      * @param data the raw API response data
      */
-    public DeviceInfo(String serial, Map<String, Object> data) {
-        this.serial = serial;
+    public DeviceInfo(String serialno, Map<String, Object> data) {
+        this.serialno = serialno;
         this.data = data != null ? Collections.unmodifiableMap(data) : Collections.emptyMap();
     }
 
     /**
-     * Returns the device serial number.
+     * Returns the device serialno.
      *
      * @return the device unique identifier
      */
+    public String getSerialno() {
+        return serialno;
+    }
+
+    /**
+     * Returns the device serialno.
+     *
+     * @return the device unique identifier
+     * @deprecated use {@link #getSerialno()}. Removed in the next major release.
+     */
+    @Deprecated
     public String getSerial() {
-        return serial;
+        return serialno;
     }
 
     /**
@@ -73,27 +84,27 @@ public final class DeviceInfo {
             return false;
         }
         DeviceInfo deviceInfo = (DeviceInfo) o;
-        return Objects.equals(serial, deviceInfo.serial);
+        return Objects.equals(serialno, deviceInfo.serialno);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(serial);
+        return Objects.hash(serialno);
     }
 
     @Override
     public String toString() {
-        return "DeviceInfo{serial='" + serial + "', data=" + data + "}";
+        return "DeviceInfo{serialno='" + serialno + "', data=" + data + "}";
     }
 
     /**
      * Creates a DeviceInfo from API response data.
      *
-     * @param serial the device serial
+     * @param serialno the device serialno
      * @param data the API response data map
      * @return a new DeviceInfo instance
      */
-    public static DeviceInfo fromMap(String serial, Map<String, Object> data) {
-        return new DeviceInfo(serial, data);
+    public static DeviceInfo fromMap(String serialno, Map<String, Object> data) {
+        return new DeviceInfo(serialno, data);
     }
 }

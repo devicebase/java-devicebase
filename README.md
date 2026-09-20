@@ -67,7 +67,7 @@ Environment variables are used as fallbacks:
 
 A missing API key throws `AuthenticationException` from the constructor.
 
-The client is serial-bound for the **mobile** methods. The browser and computer APIs take the serialno per call, so one client can drive many devices:
+The client is bound to one device for the **mobile** methods. The browser and computer APIs take the serialno per call, so one client can drive many devices:
 
 ```java
 client.browser().navigate("db-mtsi49bf0mqb", "https://example.com");
@@ -76,7 +76,7 @@ client.computer().click("db-mtthisv311f1", 640, 360, null);
 
 ## Finding a device
 
-`listDevices` is the entry point: it is the only call that needs no serial, and it is how a serialno is discovered.
+`listDevices` is the entry point: it is the only call that needs no serialno, and it is how a serialno is discovered.
 
 ```java
 for (String category : new String[] {"mobile", "browser", "computer"}) {
@@ -102,9 +102,20 @@ System types match against the device's `os_type`, because a device row only car
 
 The device identifier is **`serialno`** — the platform-issued key (e.g. `db-mttul4i41di8`) that every control method takes. Its physical counterpart is `device_sn`; the gateway resolves either, but the serialno is primary.
 
+`DeviceResponse` also accepts **`serial`** as a second key for the same column:
+the older Python service spells it that way. When a row carries both, `serialno`
+wins.
+
+### Renamed from `serial`
+
+`getSerial()` is now `getSerialno()`, and the constructor parameters are named
+`serialno`. The old accessor is kept as a `@Deprecated` alias and is removed in
+the next major release. Constructor arguments are positional, so existing calls
+are unaffected.
+
 ## Mobile
 
-The serial is bound at construction. Reach the API through `client` directly or `client.getHttpClient()`.
+The serialno is bound at construction. Reach the API through `client` directly or `client.getHttpClient()`.
 
 ```java
 // Touch
@@ -264,12 +275,12 @@ The control API reports action failures **inside an otherwise successful respons
 Real-time screen streaming and touch control:
 
 ```java
-try (MinicapClient minicap = new MinicapClient(baseUrl, apiKey, serial)) {
+try (MinicapClient minicap = new MinicapClient(baseUrl, apiKey, serialno)) {
     minicap.connect();
     byte[] frame = minicap.readFrame();
 }
 
-try (MinitouchClient minitouch = new MinitouchClient(baseUrl, apiKey, serial)) {
+try (MinitouchClient minitouch = new MinitouchClient(baseUrl, apiKey, serialno)) {
     minitouch.connect();
     minitouch.tap(100, 200);
     minitouch.swipe(100, 500, 100, 100, 300, 10);

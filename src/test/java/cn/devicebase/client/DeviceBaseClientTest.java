@@ -23,7 +23,7 @@ class DeviceBaseClientTest {
         // We can't make actual API calls without a real device
         DeviceBaseClient client = new DeviceBaseClient("test-api-key", "device-serial");
 
-        assertEquals("device-serial", client.getSerial());
+        assertEquals("device-serial", client.getSerialno());
         assertNotNull(client.getHttpClient());
     }
 
@@ -62,7 +62,7 @@ class DeviceBaseClientTest {
     @Test
     void constructor_withExplicitApiKey_doesNotReadTheEnvironment() {
         DeviceBaseClient client = new DeviceBaseClient("explicit-key", "device-serial");
-        assertEquals("device-serial", client.getSerial());
+        assertEquals("device-serial", client.getSerialno());
     }
 
     @Test
@@ -77,7 +77,7 @@ class DeviceBaseClientTest {
     void getSerial_shouldReturnConfiguredSerial() {
         DeviceBaseClient client = new DeviceBaseClient("test-api-key", "my-device-serial");
 
-        assertEquals("my-device-serial", client.getSerial());
+        assertEquals("my-device-serial", client.getSerialno());
     }
 
     @Test

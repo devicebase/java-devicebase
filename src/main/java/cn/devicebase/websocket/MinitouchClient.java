@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MinitouchClient implements Closeable, AutoCloseable {
 
-    private final String serial;
+    private final String serialno;
     private final String apiKey;
     private final String wsUrl;
     private WebSocket webSocket;
@@ -63,14 +63,14 @@ public class MinitouchClient implements Closeable, AutoCloseable {
      * Creates a new MinitouchClient.
      *
      * @param baseUrl the base URL of the DeviceBase API
-     * @param serial the device unique identifier
+     * @param serialno the device unique identifier
      * @param apiKey the JWT API key
      * @throws AuthenticationException if no API key is available
      */
-    public MinitouchClient(String baseUrl, String serial, String apiKey) {
-        this.serial = Objects.requireNonNull(serial, "Serial is required");
+    public MinitouchClient(String baseUrl, String serialno, String apiKey) {
+        this.serialno = Objects.requireNonNull(serialno, "Serial is required");
         this.apiKey = resolveApiKey(apiKey);
-        this.wsUrl = toWebSocketUrl(baseUrl) + "/v1/minitouch/" + serial;
+        this.wsUrl = toWebSocketUrl(baseUrl) + "/v1/minitouch/" + serialno;
         this.executor = Executors.newSingleThreadExecutor();
         this.connected = false;
         this.connecting = false;
@@ -164,7 +164,7 @@ public class MinitouchClient implements Closeable, AutoCloseable {
             if (e.getCause() instanceof IllegalStateException
                     && e.getCause().getMessage().contains("not found")) {
                 throw new DeviceNotFoundException(
-                        "Device '" + serial + "' not found or not connected");
+                        "Device '" + serialno + "' not found or not connected");
             }
             throw new DeviceBaseException("WebSocket connection failed: " + e.getMessage(), e);
         }

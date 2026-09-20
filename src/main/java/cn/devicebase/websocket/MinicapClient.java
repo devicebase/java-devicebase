@@ -54,7 +54,7 @@ public class MinicapClient implements Closeable, AutoCloseable {
     /** Frame header size in bytes. */
     public static final int FRAME_HEADER_SIZE = 4;
 
-    private final String serial;
+    private final String serialno;
     private final String apiKey;
     private final String wsUrl;
     private WebSocket webSocket;
@@ -74,14 +74,14 @@ public class MinicapClient implements Closeable, AutoCloseable {
      * Creates a new MinicapClient.
      *
      * @param baseUrl the base URL of the DeviceBase API
-     * @param serial the device unique identifier
+     * @param serialno the device unique identifier
      * @param apiKey the JWT API key
      * @throws AuthenticationException if no API key is available
      */
-    public MinicapClient(String baseUrl, String serial, String apiKey) {
-        this.serial = Objects.requireNonNull(serial, "Serial is required");
+    public MinicapClient(String baseUrl, String serialno, String apiKey) {
+        this.serialno = Objects.requireNonNull(serialno, "Serial is required");
         this.apiKey = resolveApiKey(apiKey);
-        this.wsUrl = toWebSocketUrl(baseUrl) + "/v1/minicap/" + serial;
+        this.wsUrl = toWebSocketUrl(baseUrl) + "/v1/minicap/" + serialno;
         this.executor = Executors.newSingleThreadExecutor();
         this.connected = false;
         this.headerParsed = false;
