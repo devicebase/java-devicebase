@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Unit tests for DeviceBaseClient class.
@@ -26,44 +27,42 @@ class DeviceBaseClientTest {
         assertNotNull(client.getHttpClient());
     }
 
+    /**
+     * {@code System.getenv()} is immutable, so the environment cannot be cleared
+     * from inside a test. The absence of the key is therefore an assumption: the
+     * test is skipped when DEVICEBASE_API_KEY is set in the environment, rather
+     * than failing on an UnsupportedOperationException.
+     */
     @Test
     void constructor_withNullApiKey_shouldThrowException() {
-        // Clear the environment variable to ensure test isolation
-        String originalValue = System.getenv("DEVICEBASE_API_KEY");
-        if (originalValue != null) {
-            System.getenv().remove("DEVICEBASE_API_KEY");
-        }
+        assumeTrue(System.getenv(DeviceBaseClient.ENV_API_KEY) == null,
+                DeviceBaseClient.ENV_API_KEY + " is set; cannot test the unset case");
 
-        try {
-            assertThrows(AuthenticationException.class, () -> {
-                new DeviceBaseClient(null, "device-serial");
-            });
-        } finally {
-            // Restore original value
-            if (originalValue != null) {
-                System.getenv().put("DEVICEBASE_API_KEY", originalValue);
-            }
-        }
+        assertThrows(AuthenticationException.class, () -> {
+            new DeviceBaseClient(null, "device-serial");
+        });
     }
 
+    /**
+     * @see #constructor_withNullApiKey_shouldThrowException for why this is guarded
+     */
     @Test
     void constructor_withEmptyApiKey_shouldThrowException() {
-        // Clear the environment variable to ensure test isolation
-        String originalValue = System.getenv("DEVICEBASE_API_KEY");
-        if (originalValue != null) {
-            System.getenv().remove("DEVICEBASE_API_KEY");
-        }
+        assumeTrue(System.getenv(DeviceBaseClient.ENV_API_KEY) == null,
+                DeviceBaseClient.ENV_API_KEY + " is set; cannot test the unset case");
 
-        try {
-            assertThrows(AuthenticationException.class, () -> {
-                new DeviceBaseClient("", "device-serial");
-            });
-        } finally {
-            // Restore original value
-            if (originalValue != null) {
-                System.getenv().put("DEVICEBASE_API_KEY", originalValue);
-            }
-        }
+        assertThrows(AuthenticationException.class, () -> {
+            new DeviceBaseClient("", "device-serial");
+        });
+    }
+
+    /**
+     * An explicitly provided key always wins over the environment.
+     */
+    @Test
+    void constructor_withExplicitApiKey_doesNotReadTheEnvironment() {
+        DeviceBaseClient client = new DeviceBaseClient("explicit-key", "device-serial");
+        assertEquals("device-serial", client.getSerial());
     }
 
     @Test

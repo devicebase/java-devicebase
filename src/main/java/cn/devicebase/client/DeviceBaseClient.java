@@ -2,6 +2,8 @@ package cn.devicebase.client;
 
 import cn.devicebase.exception.AuthenticationException;
 import cn.devicebase.exception.DeviceBaseException;
+import cn.devicebase.http.BrowserApi;
+import cn.devicebase.http.ComputerApi;
 import cn.devicebase.http.DeviceBaseHttpClient;
 import cn.devicebase.model.AppInfo;
 import cn.devicebase.model.Bounds;
@@ -316,6 +318,63 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
     }
 
     /**
+     * Stops an application on the device.
+     *
+     * @param appName the package name or identifier of the app to stop
+     * @return OperationResult indicating success or failure
+     * @throws DeviceBaseException if the request fails
+     */
+    public OperationResult stopApp(String appName) throws DeviceBaseException {
+        return httpClient.stopApp(serial, appName);
+    }
+
+    /**
+     * Stops the app currently in the foreground.
+     *
+     * @return OperationResult indicating success or failure
+     * @throws DeviceBaseException if the request fails
+     */
+    public OperationResult stopCurrentApp() throws DeviceBaseException {
+        return httpClient.stopCurrentApp(serial);
+    }
+
+    /**
+     * Runs a shell command on the device (adb/hdc platforms only).
+     *
+     * <p>The command's own exit status comes back in the payload as
+     * {@code data.exitCode} — a non-zero value is not an API error.</p>
+     *
+     * @param command the shell command
+     * @return OperationResult whose data carries exitCode/stdout/stderr
+     * @throws DeviceBaseException if the request fails
+     */
+    public OperationResult bash(String command) throws DeviceBaseException {
+        return httpClient.bash(serial, command);
+    }
+
+    /**
+     * Installs a package from a path on the agent host.
+     *
+     * @param appPath the package path on the agent host, not a local file
+     * @return OperationResult whose data carries the install id
+     * @throws DeviceBaseException if the request fails
+     */
+    public OperationResult installApp(String appPath) throws DeviceBaseException {
+        return httpClient.installApp(serial, appPath);
+    }
+
+    /**
+     * Queries a background install task.
+     *
+     * @param installId the install id returned by {@link #installApp}
+     * @return OperationResult describing the install
+     * @throws DeviceBaseException if the request fails
+     */
+    public OperationResult installStatus(String installId) throws DeviceBaseException {
+        return httpClient.installStatus(serial, installId);
+    }
+
+    /**
      * Gets information about the currently running foreground app.
      *
      * @return AppInfo containing the current app name and details
@@ -385,29 +444,67 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
     // ========== Platform API ==========
 
     /**
-     * Lists all devices.
+     * Lists all devices the current API key can see.
      *
      * @return list of devices
      * @throws DeviceBaseException if the request fails
      */
     public List<DeviceResponse> listDevices() throws DeviceBaseException {
-        return listDevices(null, null, null, 1, 20);
+        return httpClient.listDevices();
     }
 
     /**
      * Lists devices with filters.
      *
-     * @param keyword optional keyword to search
-     * @param type optional device type filter
-     * @param state optional device state filter (online/offline)
-     * @param page page number (1-based)
-     * @param pageSize number of items per page
+     * <p>This is the entry point for every platform: it is how a
+     * {@code serialno} is discovered before it is used.</p>
+     *
+     * @param keyword optional keyword, matched across several columns
+     * @param type optional category bucket (mobile/browser/computer) or system
+     *     type (android/harmonyos/ios/macos/windows/linux/chrome/chromium/edge/other)
+     * @param state optional device state filter (busy/free/offline)
+     * @param limit optional maximum number of devices (the server defaults to 10)
      * @return list of devices
      * @throws DeviceBaseException if the request fails
      */
     public List<DeviceResponse> listDevices(String keyword, String type, String state,
-            int page, int pageSize) throws DeviceBaseException {
-        return httpClient.listDevices(keyword, type, state, page, pageSize);
+            Integer limit) throws DeviceBaseException {
+        return httpClient.listDevices(keyword, type, state, limit);
+    }
+
+    /**
+     * Lists devices of one category.
+     *
+     * @param type a category bucket (mobile/browser/computer) or system type
+     * @return list of devices
+     * @throws DeviceBaseException if the request fails
+     */
+    public List<DeviceResponse> listDevices(String type) throws DeviceBaseException {
+        return httpClient.listDevices(type);
+    }
+
+    /**
+     * Returns the browser platform API for this client's connection.
+     *
+     * <p>Browser methods take the browser device's serialno per call, so they are
+     * not bound to {@link #getSerial()}.</p>
+     *
+     * @return the browser API
+     */
+    public BrowserApi browser() {
+        return httpClient.browser();
+    }
+
+    /**
+     * Returns the computer platform API for this client's connection.
+     *
+     * <p>Computer methods take the computer device's serialno per call, so they
+     * are not bound to {@link #getSerial()}.</p>
+     *
+     * @return the computer API
+     */
+    public ComputerApi computer() {
+        return httpClient.computer();
     }
 
     /**

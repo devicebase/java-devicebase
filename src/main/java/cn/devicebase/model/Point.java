@@ -3,6 +3,7 @@ package cn.devicebase.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,7 +63,12 @@ public final class Point {
      * @return map containing x and y coordinates
      */
     public Map<String, Integer> toMap() {
-        return Map.of("x", x, "y", y);
+        // LinkedHashMap, not Map.of: the wire order has to be stable so a
+        // request is byte-identical across runs.
+        Map<String, Integer> fields = new LinkedHashMap<>();
+        fields.put("x", x);
+        fields.put("y", y);
+        return fields;
     }
 
     @Override

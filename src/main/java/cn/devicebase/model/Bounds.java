@@ -3,6 +3,7 @@ package cn.devicebase.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -83,7 +84,14 @@ public final class Bounds {
      * @return map containing x1, y1, x2, y2 coordinates
      */
     public Map<String, Integer> toMap() {
-        return Map.of("x1", x1, "y1", y1, "x2", x2, "y2", y2);
+        // LinkedHashMap, not Map.of: the wire order has to be stable so a
+        // request is byte-identical across runs.
+        Map<String, Integer> fields = new LinkedHashMap<>();
+        fields.put("x1", x1);
+        fields.put("y1", y1);
+        fields.put("x2", x2);
+        fields.put("y2", y2);
+        return fields;
     }
 
     @Override

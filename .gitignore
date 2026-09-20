@@ -1,7 +1,6 @@
 # Gradle
 .gradle/
 build/
-!gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
 
@@ -23,6 +22,11 @@ nbproject/
 # Package files
 *.jar
 *.war
+# ...but the Gradle wrapper jar is a committed binary, not a build artifact.
+# This negation has to come *after* the *.jar rule above: .gitignore is
+# last-match-wins, and while it sat earlier the jar was silently ignored and
+# never committed, so ./gradlew could not run at all.
+!gradle/wrapper/gradle-wrapper.jar
 *.ear
 *.zip
 *.tar.gz

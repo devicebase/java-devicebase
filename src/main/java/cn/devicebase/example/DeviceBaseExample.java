@@ -2,7 +2,10 @@ package cn.devicebase.example;
 
 import cn.devicebase.client.DeviceBaseClient;
 import cn.devicebase.model.DeviceInfo;
+import cn.devicebase.model.DeviceResponse;
 import cn.devicebase.model.OperationResult;
+
+import java.util.List;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,6 +54,15 @@ public class DeviceBaseExample {
 
             // Example: Input text
             exampleInputText(client);
+
+            // Example: Discover the devices behind the other two platforms
+            exampleListDevices(client);
+
+            // Example: Drive a browser over CDP
+            exampleBrowser(client);
+
+            // Example: Drive a desktop
+            exampleComputer(client);
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
@@ -147,5 +159,74 @@ public class DeviceBaseExample {
         // Clear text
         result = client.clearText();
         System.out.println("Clear text: " + (result.isSuccess() ? "Success" : "Failed"));
+    }
+
+    /**
+     * Demonstrates device discovery.
+     *
+     * <p>This is the entry point for every platform: a serialno is only
+     * meaningful within one family, and this is how it is found.</p>
+     */
+    private static void exampleListDevices(DeviceBaseClient client) throws Exception {
+        System.out.println("\n--- List Devices ---");
+
+        for (String category : new String[] {"mobile", "browser", "computer"}) {
+            List<DeviceResponse> devices = client.listDevices(category);
+            System.out.println(category + ": " + devices.size() + " device(s)");
+            for (DeviceResponse device : devices) {
+                System.out.println("  " + device.getSerialno()
+                        + "  type=" + device.getType()
+                        + "  os_type=" + device.getOsType()
+                        + "  state=" + device.getState());
+            }
+        }
+    }
+
+    /**
+     * Demonstrates driving a registered browser device over CDP.
+     *
+     * <p>Browser methods take the browser device's serialno, which is different
+     * from the mobile serial the client was constructed with.</p>
+     */
+    private static void exampleBrowser(DeviceBaseClient client) throws Exception {
+        System.out.println("\n--- Browser ---");
+
+        List<DeviceResponse> browsers = client.listDevices("browser");
+        if (browsers.isEmpty()) {
+            System.out.println("No browser device registered; skipping");
+            return;
+        }
+        String serialno = browsers.get(0).getSerialno();
+
+        client.browser().navigate(serialno, "https://example.com");
+        client.browser().fill(serialno, "#search", "devicebase");
+        client.browser().click(serialno, "button[type=submit]");
+
+        OperationResult state = client.browser().state(serialno);
+        System.out.println("Browser state: " + state.getData());
+    }
+
+    /**
+     * Demonstrates driving a registered desktop.
+     *
+     * <p>{@code wait} takes milliseconds and {@code bash}'s timeout takes
+     * seconds; both widen the HTTP deadline to cover the block.</p>
+     */
+    private static void exampleComputer(DeviceBaseClient client) throws Exception {
+        System.out.println("\n--- Computer ---");
+
+        List<DeviceResponse> computers = client.listDevices("computer");
+        if (computers.isEmpty()) {
+            System.out.println("No computer device registered; skipping");
+            return;
+        }
+        String serialno = computers.get(0).getSerialno();
+
+        System.out.println("Screen: " + client.computer().screenSize(serialno).getData());
+        System.out.println("Mouse:  " + client.computer().position(serialno).getData());
+
+        // The command's own exit status arrives in data.exitCode, not as an error.
+        OperationResult ran = client.computer().bash(serialno, "echo hello", 30);
+        System.out.println("bash exitCode: " + ran.getData().get("exitCode"));
     }
 }
