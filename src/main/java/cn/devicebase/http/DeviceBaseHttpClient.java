@@ -91,6 +91,7 @@ public class DeviceBaseHttpClient implements AutoCloseable {
 
     private final BrowserApi browserApi;
     private final ComputerApi computerApi;
+    private final CloudBrowserApi cloudBrowserApi;
 
     /**
      * Creates a new DeviceBaseHttpClient.
@@ -126,6 +127,7 @@ public class DeviceBaseHttpClient implements AutoCloseable {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         this.browserApi = new BrowserApi(this);
         this.computerApi = new ComputerApi(this);
+        this.cloudBrowserApi = new CloudBrowserApi(this);
     }
 
     /**
@@ -243,6 +245,19 @@ public class DeviceBaseHttpClient implements AutoCloseable {
      */
     public ComputerApi computer() {
         return computerApi;
+    }
+
+    /**
+     * Returns the cloud browser lifecycle API.
+     *
+     * <p>These calls build and destroy a browser the platform runs for you; they
+     * address no existing device, so they are bound to neither a serialno nor a
+     * platform group.</p>
+     *
+     * @return the cloud browser API, bound to this transport
+     */
+    public CloudBrowserApi cloudBrowser() {
+        return cloudBrowserApi;
     }
 
     /**

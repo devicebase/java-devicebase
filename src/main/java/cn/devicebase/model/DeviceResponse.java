@@ -74,6 +74,16 @@ public final class DeviceResponse {
     @JsonProperty("network")
     private final String network;
 
+    /**
+     * Whether the platform built this browser on its own cluster.
+     *
+     * <p>Both a cloud browser and one attached by hand are {@code type=browser},
+     * so this is the only field that tells them apart — and the only kind
+     * {@link cn.devicebase.http.CloudBrowserApi#delete(String)} accepts.</p>
+     */
+    @JsonProperty("is_cloud")
+    private final boolean cloud;
+
     @JsonProperty("updated_at")
     private final Instant updatedAt;
 
@@ -103,6 +113,7 @@ public final class DeviceResponse {
             @JsonProperty("location") String location,
             @JsonProperty("operator") String operator,
             @JsonProperty("network") String network,
+            @JsonProperty("is_cloud") boolean cloud,
             @JsonProperty("updated_at") Instant updatedAt) {
         this.id = id;
         // The platform key wins when both are sent.
@@ -121,6 +132,7 @@ public final class DeviceResponse {
         this.location = location;
         this.operator = operator;
         this.network = network;
+        this.cloud = cloud;
         this.updatedAt = updatedAt;
     }
 
@@ -263,6 +275,15 @@ public final class DeviceResponse {
      */
     public String getOperator() {
         return operator;
+    }
+
+    /**
+     * Returns whether the platform built this browser.
+     *
+     * @return true for a cloud browser, false for one attached by hand
+     */
+    public boolean isCloud() {
+        return cloud;
     }
 
     /**

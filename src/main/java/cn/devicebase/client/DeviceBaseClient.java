@@ -3,6 +3,7 @@ package cn.devicebase.client;
 import cn.devicebase.exception.AuthenticationException;
 import cn.devicebase.exception.DeviceBaseException;
 import cn.devicebase.http.BrowserApi;
+import cn.devicebase.http.CloudBrowserApi;
 import cn.devicebase.http.ComputerApi;
 import cn.devicebase.http.DeviceBaseHttpClient;
 import cn.devicebase.model.AppInfo;
@@ -516,6 +517,19 @@ public class DeviceBaseClient implements Closeable, AutoCloseable {
      */
     public ComputerApi computer() {
         return httpClient.computer();
+    }
+
+    /**
+     * Returns the cloud browser lifecycle API for this client's connection.
+     *
+     * <p>These calls build and destroy a browser the platform runs for you. They
+     * address no existing device, so they are bound to neither
+     * {@link #getSerialno()} nor a platform group.</p>
+     *
+     * @return the cloud browser API
+     */
+    public CloudBrowserApi cloudBrowser() {
+        return httpClient.cloudBrowser();
     }
 
     /**

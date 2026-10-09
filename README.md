@@ -7,6 +7,7 @@ Java SDK for the [DeviceBase](https://devicebase.cn) device automation platform.
 | **mobile** | Android, HarmonyOS, iOS | `/v1/{action}/{serialno}` |
 | **browser** | Chrome / Chromium / Edge over CDP | `/api/browser/{serialno}/{action...}` |
 | **computer** | macOS / Windows / Linux desktops | `/api/computer/{serialno}/{action}` |
+| **cloud browser** | browsers the platform runs for you | `/v1/browser/*` |
 
 ## Requirements
 
@@ -192,6 +193,48 @@ browser.close(serialno);
 ```
 
 Editing shortcuts (`Meta a`, `Backspace`) act on the page. Browser-chrome shortcuts such as `Control+t` are **not reachable** — CDP drives the page, not the browser UI.
+
+## Cloud Browsers
+
+The methods above drive a browser that already exists. These four build and destroy one — a browser the platform runs for you on its own cluster, over `/v1/browser/*`. A Chrome you attached yourself is not a cloud browser: it does not count against the quota and cannot be deleted through these calls (`DeviceResponse.isCloud()` tells them apart).
+
+```java
+CloudBrowserApi cloud = client.cloudBrowser();
+
+CloudBrowserQuota quota = cloud.quota();          // ask before creating, not after failing
+System.out.println(quota.getRemaining());
+
+// name, windowSize and waitSeconds are all optional. A cloud browser is always
+// headless — there is no argument for that.
+CloudBrowserCreateResult created = cloud.create("my-browser", "1366x768", null);
+
+// Creation is asynchronous, so the call waits for it: serialno is the key every
+// browser method takes, and isRegistered() says whether it made it in time.
+System.out.println(created.getSerialno() + " " + created.isRegistered());
+// getAliasName() is the name you passed, verbatim; getName() is the platform's own
+// identity for the machine ("Browser-<serial[0:8]>"), not your name for it.
+
+// A wait that runs out is not a failure: ask again with the device_sn it
+// returned ("not yet" is a value, never an exception).
+if (!created.isRegistered()) {
+    System.out.println(cloud.status(created.getDeviceSn()).isRegistered());
+}
+
+browser.navigate(created.getSerialno(), "https://example.com");
+
+cloud.delete(created.getSerialno());              // irreversible
+```
+
+`delete` takes either the `serialno` or the `device_sn` from creation, and does not wait for the machine: the platform queues the reap and the node collects it on its next heartbeat, so it succeeds even while the node is offline. Creation waits up to 15 seconds for the browser to register (`waitSeconds` 0-60 overrides it; `0` answers immediately, which suits creating a batch).
+
+A rejected call throws, and which exception decides whether a retry is worth it:
+
+| Exception | Means | Retry? |
+|-----------|-------|--------|
+| `DeviceNotFoundException` (404) | It does not exist, is not yours, or was already deleted | No |
+| `BusinessException` / `DeviceBaseException` with status 409 | Quota exhausted (create), or the device is not a cloud browser (delete) | No |
+| `DeviceBaseException` with status 502 | Platform↔node auth failed — signature, key or clock | No; someone has to fix it |
+| `DeviceBaseException` with status 503 | No capacity right now, or the node could not be reached | Yes, later |
 
 ## Computer
 
