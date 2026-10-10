@@ -92,6 +92,7 @@ public class DeviceBaseHttpClient implements AutoCloseable {
     private final BrowserApi browserApi;
     private final ComputerApi computerApi;
     private final CloudBrowserApi cloudBrowserApi;
+    private final UserApi userApi;
 
     /**
      * Creates a new DeviceBaseHttpClient.
@@ -128,6 +129,7 @@ public class DeviceBaseHttpClient implements AutoCloseable {
         this.browserApi = new BrowserApi(this);
         this.computerApi = new ComputerApi(this);
         this.cloudBrowserApi = new CloudBrowserApi(this);
+        this.userApi = new UserApi(this);
     }
 
     /**
@@ -258,6 +260,18 @@ public class DeviceBaseHttpClient implements AutoCloseable {
      */
     public CloudBrowserApi cloudBrowser() {
         return cloudBrowserApi;
+    }
+
+    /**
+     * Returns the account API.
+     *
+     * <p>Its calls address the account the API key belongs to rather than a
+     * device, so they are bound to neither a serialno nor a platform group.</p>
+     *
+     * @return the account API, bound to this transport
+     */
+    public UserApi user() {
+        return userApi;
     }
 
     /**

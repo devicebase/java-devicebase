@@ -236,6 +236,29 @@ A rejected call throws, and which exception decides whether a retry is worth it:
 | `DeviceBaseException` with status 502 | Platform↔node auth failed — signature, key or clock | No; someone has to fix it |
 | `DeviceBaseException` with status 503 | No capacity right now, or the node could not be reached | Yes, later |
 
+## Account
+
+The account behind the API key — no device involved, and no serialno to pass: the
+key identifies the account, and it can only ever be your own.
+
+```java
+UserApi user = client.user();
+
+UserInfo info = user.info();
+System.out.println(info.getUsername() + " " + info.getMobile()
+        + " " + info.getCredits() + " " + info.getRegisteredAt());
+// isCanCheckin() says whether today's reward is still unclaimed.
+
+UserCheckin reward = user.checkin();
+System.out.println(reward.getMessage() + " " + reward.getCreditsEarned());
+```
+
+`checkin()` claims the daily points: 25 on the first day, +10 per consecutive day,
+up to 95 a day. Claiming twice in one day is **not** an error — the second call
+returns `isAlreadyChecked()` true, `getCreditsEarned()` 0 and the platform's own
+message ("今日已签到"), with nothing granted. That makes it safe to run from a
+daily scheduled task without checking first.
+
 ## Computer
 
 The serialno of a registered computer device, from `client.listDevices("computer")`. Coordinates are absolute screen pixels.
